@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>unGoogle Maps</title>
+        <style>
+                /* Always set the map height explicitly to define the size of the div
+                 * element that contains the map. */
+                #map {
+                  height: 80%;
+                }
+                /* Optional: Makes the sample page fill the window. */
+                html, body {
+                  height: 100%;
+                  margin: 0;
+                  padding: 0;
+                }
+              </style>
+    </head>
+
+    <body>
+        <div id = 'map'></div>
+        <input type = "text" id="searchBox" placeholder="Search Location">
+        <button onclick = "searchMap()">Search</button>
+        <script>
+        function initMap() {
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: {lat: -34.397, lng: 150.644},
+                    zoom: 8
+                    });
+                } </script>
+        
+        <script src="https://maps.googleapis.com/maps/api/js?key=APIKEYHERE&callback=initMap"
+    async defer></script>
+        <script src='./frontend.js'></script>
+
+    </body>
+
+</html>
