@@ -12,7 +12,7 @@ app.get('/',function(req,res){
 });
 
 app.get('/post/',function(req,res){
-    var YOUR_API_KEY ='AIzaSyArqn8ZfBNUxwRJuhFV1IKvKD3uFP55uS4';
+    var YOUR_API_KEY ='ADD API KEY';
     //var searchURL = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input='+req.params.newPlace+'&inputtype=textquery&fields=geometry&key='+YOUR_API_KEY;
     console.log(req.query.Url)
     suppliedUrl=req.query.Url
