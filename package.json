@@ -1,24 +1,25 @@
 {
-  "name": "unmaps",
+  "name": "mapya",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "directories": {
+    "example": "example"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lcrofoot/unMaps.git"
+    "url": "git+https://github.com/hannahph/mapya.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/lcrofoot/unMaps/issues"
+    "url": "https://github.com/hannahph/mapya/issues"
   },
-  "homepage": "https://github.com/lcrofoot/unMaps#readme",
+  "homepage": "https://github.com/hannahph/mapya#readme",
   "dependencies": {
-    "express": "^4.17.1",
-    "path": "^0.12.7",
-    "xmlhttprequest": "^1.8.0"
+    "crawler": "^1.2.1"
   }
 }
