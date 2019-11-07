@@ -16,7 +16,7 @@ var result_list = []
 for (i = 0; i < search_terms.length; i++) {
     current_search_term = search_terms[i]
     console.log(current_search_term);
-    var place_url = "https://maps.googleapis.com/maps/api/place/textsearch/json?query="+current_search_term+"&key=AIzaSyCfhcM7UDXq3nHnRIy7VHkWwxati7mAsqc"
+    var place_url = "https://maps.googleapis.com/maps/api/place/textsearch/json?query="+current_search_term+"&key=**ADD API KEY HERE**"
     //TODO: look into region or location/radius to limit results, compared to appending city name
     console.log(place_url);
     var xmlHttp = new XMLHttpRequest();
@@ -28,7 +28,7 @@ for (i = 0; i < search_terms.length; i++) {
         } else{
             var place_id = place_search_results.results[0].place_id;
             console.log(place_search_results.results[0].name);
-            var place_detail_url = "https://maps.googleapis.com/maps/api/place/details/json?place_id="+place_id+"&fields=formatted_address,formatted_phone_number,rating,types,geometry/location,opening_hours/weekday_text&key=AIzaSyCfhcM7UDXq3nHnRIy7VHkWwxati7mAsqc"
+            var place_detail_url = "https://maps.googleapis.com/maps/api/place/details/json?place_id="+place_id+"&fields=formatted_address,formatted_phone_number,rating,types,geometry/location,opening_hours/weekday_text&key=**ADD API KEY HERE**"
             //console.log(place_detail_url)
             var xmlHttp2 = new XMLHttpRequest();
             xmlHttp2.onreadystatechange = function() { 

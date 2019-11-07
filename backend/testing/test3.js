@@ -1,6 +1,6 @@
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 var current_search_term = "Copenhagen Nyhavn"
-var place_url = "https://maps.googleapis.com/maps/api/place/textsearch/json?query="+current_search_term+"&key=AIzaSyCfhcM7UDXq3nHnRIy7VHkWwxati7mAsqc"
+var place_url = "https://maps.googleapis.com/maps/api/place/textsearch/json?query="+current_search_term+"&key=**ADD API KEY HERE**"
 console.log(place_url);
 var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() { 

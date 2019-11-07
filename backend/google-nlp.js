@@ -6,7 +6,7 @@ const NLP = require('google-nlp')
 //const crawl = require('./web_scraper.js')
 
 //	Google Cloud API key
-const apiKey = 'AIzaSyCfhcM7UDXq3nHnRIy7VHkWwxati7mAsqc'
+const apiKey = '**ADD API KEY HERE**'
 
 // 	Text to send to Google NLP
 //var text = 'this is wrong'
