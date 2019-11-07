@@ -1,5 +1,6 @@
+//documentation: https://www.npmjs.com/package/crawler
+
 var Crawler = require("crawler");
-var fs = require('fs');
 
 //var searchUrl = "https://www.ontheluce.com/visiting-copenhagen-on-a-budget/";
 
@@ -14,19 +15,14 @@ function crawlSite(searchUrl, callback){
     var blog_content = "";
     var c = new Crawler({
         maxConnections : 10,
+        // This will be called for each crawled page
         callback : function (error, res, done) {
             if(error){
                 console.log(error);
             }else{
                 var $ = res.$;
                 blog_content = String($("p").text());
-                fs.writeFile('blog_content.txt', blog_content, function (err)
-                {
-                    if (err) throw err;
-                    console.log('Saved!');
-                });
-                //console.log(blog_content);
-                callback(null,blog_content)
+                callback(null,blog_content) //pass blog_content to another function
             }
             done();
         }

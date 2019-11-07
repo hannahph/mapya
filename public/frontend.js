@@ -8,7 +8,9 @@ map = new google.maps.Map(document.getElementById('map'), {
 } 
 function searchMap(){
     var enteredURL = document.getElementById('searchBox').value;
-    var searchURL = '/post?Url='+encodeURI(enteredURL.toString());
+    var enteredCity = document.getElementById('cityBox').value;
+    var searchURL = '/post?Url='+encodeURI(enteredURL.toString())+"&city="+enteredCity;
+    console.log(searchURL);
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() { 
         location_response = JSON.parse(xmlHttp.responseText)
@@ -28,13 +30,15 @@ function searchMap(){
     xmlHttp.send();
 
     
-}
+};
 
 function printLocList(li, tag, thisid){
     tag = "";
-    //console.log(li)
+    console.log(li);
     for (var i = 0; i<li.length; i++){
-      tag += "<li>" + li[i].name + "; Open: " + "<HOURS HERE>" + "</li>";
-    }     
+        if (li[i] !== null){
+            tag += "<li>" + li[i].name;
+        };
+    };     
     document.getElementById(thisid).innerHTML=tag;
-  }
+  };

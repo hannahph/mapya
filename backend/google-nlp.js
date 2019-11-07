@@ -2,15 +2,15 @@
 
 //	Import this module
 const NLP = require('google-nlp')
-const fs = require('fs')
-const crawl = require('./web_scraper.js')
+//const fs = require('fs')
+//const crawl = require('./web_scraper.js')
 
 //	Google Cloud API key
-const apiKey = 'ADD API KEY'
+const apiKey = 'AIzaSyCfhcM7UDXq3nHnRIy7VHkWwxati7mAsqc'
 
 // 	Text to send to Google NLP
 //var text = 'this is wrong'
-testUrl='https://shershegoes.com/things-to-do-copenhagen-denmark/'
+//testUrl='https://shershegoes.com/things-to-do-copenhagen-denmark/'
 
 // run crawl site 
 
@@ -39,7 +39,7 @@ function runER(text, callback){
         //console.log(text)
         // 	Output returned entities
         //console.log( 'Entities:', entities );
-        console.log(entities.entities[5].type)
+        //console.log(entities.entities[5].type)
         // Filter to only "Location" Entities 
         loc_entities = entities.entities.filter(function(ent){
             return ent.type=='LOCATION'
