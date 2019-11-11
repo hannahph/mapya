@@ -1,12 +1,14 @@
 // Reference Code based on this: https://www.npmjs.com/package/google-nlp 
+// Cities and countries data source: https://datahub.io/core/world-cities 
 
 //	Import this module
 const NLP = require('google-nlp')
+var database = require('./cities.json');
 //const fs = require('fs')
 //const crawl = require('./web_scraper.js')
 
 //	Google Cloud API key
-const apiKey = '**ADD API KEY HERE**'
+const apiKey = '**APIKEY**'
 
 // 	Text to send to Google NLP
 //var text = 'this is wrong'
@@ -54,9 +56,16 @@ function runER(text, callback){
         loc_entities_proper = loc_entities.filter(function(ent){
             return filterProper(ent);
         })
+        
         console.log('Proper Location Entities', loc_entities_proper.length)
-        //console.log(loc_entities_proper)
-        callback(null, loc_entities_proper)
+        console.log('Total Proper Locations',loc_entities_proper.length)
+
+        loc_entities_proper_filtered = loc_entities_proper.filter(function(ent){
+            return filterSet(ent,citySet);
+        })
+        console.log('Filtered Proper Locations', loc_entities_proper_filtered.length)
+        
+        callback(null, loc_entities_proper_filtered)
     })
     
     .catch(function( error ) {
@@ -78,8 +87,38 @@ function filterProper(loc_entity){
     return isProper
 }
 
-// Filter entities to only "Location" entities. 
+// create sets of countries and cities for filter 
+//console.log(database)
+citySet= new Set([])
+countrySet = new Set([])
+for (i =0; i<database.length; i++){
+    citySet.add(database[i].name)
+}
+//console.log(citySet)
+//console.log(citySet.size)
 
+for (i =0; i<database.length; i++){
+    countrySet.add(database[i].country)
+}
+//console.log(countrySet.size)
+
+
+function filterSet(loc_entity){
+    if (citySet.has(loc_entity.name) || countrySet.has(loc_entity.name)){
+        console.log('Found', loc_entity.name, "..Removing")
+        return false
+    }
+    else{
+        return true
+    }
+}
+
+// This can be used for testing of this module 
+
+//testText="London is separated into many different boroughs and neighborhoods; each offering a unique flavor of the city! The most popular areas worth visiting are: Covent Garden Covent Garden is one of the most popular areas of the city with some of the best theaters. Neal Street is a shoe lover’s paradise with a series of shops catering to every sole. SoHo: A vibrant and exciting part of the city that is home to an amazing range of pubs, jazz and blues bars and the heart of London’s gay scene. This is where many of the fashion forward residents of the city come to party. Kensington + Chelsea: This borough is home to some of London’s most posh shops and luxurious residents. It’s also home to Notting Hill which has become an up-and-coming, trendy neighborhood. Camden: Famous for being the alternative center of London where hippies and punks tread the streets together. It is home to a lively mix of music venues, markets, eateries, tattoo parlors and boutiques. The City of London: The City is actually only about a square mile in size, and is home to London’s biggest skyscrapers and financial district"
+//runER(testText, function myvar(err, res){
+//    console.log(res)
+//})
 
 
 //THIS IS ALL SAMPLE CODE FOR HOW TO PERFORM OTHER KINDS OF ANALYSES
