@@ -16,9 +16,10 @@ for (i = 1; i < nlpOutput.length; i++) {
 
 function searchPlaces(search_terms,callback){
     var result_list = []
-    for (i = 0; i < search_terms.length; i++) { 
+    for (i = 0; i<20; i++){
+//    for (i = 0; i < search_terms.length; i++) { 
         current_search_term = search_terms[i]
-        var place_url = "https://maps.googleapis.com/maps/api/place/textsearch/json?query="+current_search_term+"&key=**APIKEY**"
+        var place_url = "https://maps.googleapis.com/maps/api/place/textsearch/json?query="+current_search_term+"&key=AIzaSyArqn8ZfBNUxwRJuhFV1IKvKD3uFP55uS4"
         //TODO: look into region or location/radius to limit results, compared to appending city name
         //console.log(place_url);
         var xmlHttp = new XMLHttpRequest();
@@ -30,7 +31,7 @@ function searchPlaces(search_terms,callback){
             } else{
                 var place_id = place_search_results.results[0].place_id;
                 //console.log(place_search_results.results[0].name);
-                var place_detail_url = "https://maps.googleapis.com/maps/api/place/details/json?place_id="+place_id+"&fields=formatted_address,formatted_phone_number,rating,types,geometry/location,opening_hours/weekday_text&key=**APIKEY**"
+                var place_detail_url = "https://maps.googleapis.com/maps/api/place/details/json?place_id="+place_id+"&fields=formatted_address,formatted_phone_number,rating,types,geometry/location,opening_hours/weekday_text&key=AIzaSyArqn8ZfBNUxwRJuhFV1IKvKD3uFP55uS4"
                 //console.log(place_detail_url)
                 var xmlHttp2 = new XMLHttpRequest();
                 xmlHttp2.onreadystatechange = function() { 
