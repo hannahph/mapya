@@ -8,7 +8,7 @@ var database = require('./cities.json');
 //const crawl = require('./web_scraper.js')
 
 //	Google Cloud API key
-const apiKey = 'AIzaSyArqn8ZfBNUxwRJuhFV1IKvKD3uFP55uS4'
+const apiKey = '**ADD API KEY***'
 
 // 	Text to send to Google NLP
 //var text = 'this is wrong'
@@ -56,7 +56,11 @@ function runER(text, callback){
         loc_entities_proper = loc_entities.filter(function(ent){
             return filterProper(ent);
         })
-        
+
+        //***************TESTING PURPOSES - limit results ***********************************
+        loc_entities_proper = loc_entities_proper.slice(1,10);
+        //***************TESTING PURPOSES - limit results ***********************************
+
         console.log('Proper Location Entities', loc_entities_proper.length)
         console.log('Total Proper Locations',loc_entities_proper.length)
 

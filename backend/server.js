@@ -5,7 +5,7 @@ var nlp_ER = require('./google-nlp.js');
 var crawl = require('./web_scraper.js');
 var search_places = require('./place_search.js');
 
-var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+//var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 app.use(express.static('../public/'));
 
 app.get('/',function(req,res){
@@ -13,7 +13,7 @@ app.get('/',function(req,res){
 });
 
 app.get('/post/',function(req,res){
-    var YOUR_API_KEY ='**ADD API KEY HERE**';
+    //var YOUR_API_KEY ='**API KEY**';
     //var searchURL = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input='+req.params.newPlace+'&inputtype=textquery&fields=geometry&key='+YOUR_API_KEY;
     console.log(req.query.Url)
     suppliedUrl=req.query.Url
@@ -26,7 +26,7 @@ app.get('/post/',function(req,res){
                 location_names[i]=suppliedCity+" "+returned_locations[i].name;
             }
             console.log(location_names);
-            search_places.searchPlaces(location_names,function(err,location_details){
+            search_places.basicSearch(location_names,function(err,location_details){
                 console.log(location_details);
                 res.send(JSON.stringify(location_details));
             });
@@ -34,19 +34,26 @@ app.get('/post/',function(req,res){
         });
     });
 
-    //call web scraper for Url --> text 
-    //call nlp(text) --> List of locations 
-    // PLACES SEARCH WOULD GO HERE 
-    //simplify data structure to send to front end 
-    //res.send(locations)
+});
 
 
-    //var xmlHttp = new XMLHttpRequest();
-    //xmlHttp.onreadystatechange = function() { 
-    //    res.send(xmlHttp.responseText);
-    //};
-    //xmlHttp.open("GET", searchURL, false);
-    //xmlHttp.send();
+app.get('/map/',function(req,res){
+    var suppliedCity = req.query.city;
+    console.log("CENTERING MAP: " + suppliedCity)
+    search_places.basicSearch([suppliedCity],function(err,location_details){
+        console.log(JSON.stringify(location_details));
+        res.send(JSON.stringify(location_details));
+    });
+});
+
+
+app.get('/hotel/',function(req,res){
+    var suppliedHotel = req.query.hotel + " " + req.query.city;
+    console.log("ADDING HOTEL: " + suppliedHotel)
+    search_places.basicSearch([suppliedHotel],function(err,location_details){
+        console.log(JSON.stringify(location_details));
+        res.send(JSON.stringify(location_details));
+    });
 });
 
 app.listen(8080);
