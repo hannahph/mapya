@@ -1,16 +1,18 @@
-
 var map;
-  
+var hotelButtonHtml = '<input type = "text" id="hotelBox" placeholder="Enter Hotel Name"><button onclick = "plotHotel()">Find Hotel</button>';
+var latlngbounds = new google.maps.LatLngBounds();
+console.log("LATLONG SET: "+latlngbounds);
 
 function changeMap(location) {
 map = new google.maps.Map(document.getElementById('map'), {
     center: location,
-    zoom: 8
+    zoom: 12
     });
-} 
+}
+
 function searchMap(){
     var enteredURL = document.getElementById('searchBox').value;
-    var enteredCity = document.getElementById('cityBox').value; //how can we make it so it immediately resets the map to this city
+    var enteredCity = document.getElementById('cityBox').value; 
     var searchURL = '/post?Url='+encodeURI(enteredURL.toString())+"&city="+enteredCity;
     console.log(searchURL);
     var xmlHttp = new XMLHttpRequest();
@@ -52,10 +54,12 @@ function searchMap(){
         //var newLng = newLatLng.lng;
         //changeMap(newLat,newLng);
         printLocList(dedup_location_response, listprint, 'mylist');
+        console.log(dedup_location_response[0].geometry.location);
         changeMap(dedup_location_response[0].geometry.location);
-        plotPlaces(dedup_location_response);
+        plotPlaces(dedup_location_response,"red");
+        document.getElementById('hotelOption').innerHTML=hotelButtonHtml;
     }
-    xmlHttp.open("GET", searchURL, false); // true for asynchronous 
+    xmlHttp.open("GET", searchURL, true); // true for asynchronous ****Wasn't working until I made this true
     xmlHttp.send();
 
     
@@ -72,15 +76,41 @@ function printLocList(li, tag, thisid){
     document.getElementById(thisid).innerHTML=tag;
   };
 
-function plotPlaces(places_list){
+
+function plotPlaces(places_list,color){
+    console.log(latlngbounds);
+    if(latlngbounds == undefined){
+        console.log("in undefined loop");
+        latlngbounds = new google.maps.LatLngBounds();
+    }
+    console.log(latlngbounds)
     for (var i = 0; i<places_list.length; i++){
         //console.log(places_list[i])
         //console.log(places_list[i].geometry.location)
         position = places_list[i].geometry.location
         name = places_list[i].name
-        marker = new google.maps.Marker({position: position, map:map, title:name})
+        var url= "http://maps.google.com/mapfiles/ms/icons/" + color + "-dot.png";
+        console.log(url);
+        marker = new google.maps.Marker({position: position, map:map, title:name, icon:url})
+        latlngbounds.extend(position);
     }
-}    
+    map.fitBounds(latlngbounds);
+} 
+
+function plotHotel(){
+    var enteredHotel = document.getElementById('hotelBox').value;
+    var enteredCity = document.getElementById('cityBox').value;
+    var searchURL = '/hotel?hotel='+enteredHotel+"&city="+enteredCity;
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() { 
+        location_response = JSON.parse(xmlHttp.responseText)
+        console.log(location_response);
+        plotPlaces(location_response,"blue");
+    };
+    xmlHttp.open("GET", searchURL, true); // true for asynchronous ..made this one true too
+    xmlHttp.send();
+};
+
 
 function filterNull(iter){
     if (iter == null){
@@ -91,3 +121,18 @@ function filterNull(iter){
 }
 
 
+function centerMap(){
+    var enteredCity = document.getElementById('cityBox').value;
+    var searchURL = '/map?&city='+enteredCity;
+    console.log(searchURL);
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() { 
+        var returned_location = JSON.parse(xmlHttp.responseText);
+        var city_lat = returned_location[0].geometry.location.lat;
+        var city_lng = returned_location[0].geometry.location.lng;
+        var city_pos = {lat: city_lat, lng: city_lng};
+        changeMap(city_pos);
+    };
+    xmlHttp.open("GET", searchURL, true); // true for asynchronous ..made this one true too
+    xmlHttp.send();
+};

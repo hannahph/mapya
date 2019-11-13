@@ -21,7 +21,8 @@
         <div id = 'map'></div>
         <input type = "text" id="searchBox" placeholder="Enter URL">
         <input type = "text" id="cityBox" placeholder="Enter City">
-        <button onclick = "searchMap()">Search</button>
+        <button onclick = "centerMap();searchMap();">Search</button>
+        <div id = "hotelOption"></div>
         <div id='mylist'></div>
         <script>
         var center = {lat: 0, lng: 0}
@@ -41,7 +42,7 @@
                 //var marker = new google.maps.Marker({position:{lat: -34.380, lng: 150.645}, map:map})
                 } </script>
         
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyArqn8ZfBNUxwRJuhFV1IKvKD3uFP55uS4&callback=initMap"
+        <script src="https://maps.googleapis.com/maps/api/js?key=***ADDAPIKEY*****c&callback=initMap"
     async defer></script>
         <script src='./frontend.js'></script>
 
