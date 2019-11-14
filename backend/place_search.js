@@ -15,7 +15,7 @@ var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 //console.log(search_terms);
 
 function searchPlaces(search_terms,callback){
-    var YOUR_API_KEY ='AIzaSyArqn8ZfBNUxwRJuhFV1IKvKD3uFP55uS4';
+    var YOUR_API_KEY ='**APIKEY**';
     var result_list = []
    // for (i = 0; i<20; i++){
     for (i = 0; i < search_terms.length; i++) { 

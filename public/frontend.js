@@ -125,7 +125,7 @@ function plotPlaces(places_list,color){
                 //for some reason this doesn't work with 'mousemove' type - it makes the markers not show up
                 google.maps.event.addListener(map,'click',function(infowindow){
                     return function(){
-                        console.log('mousemove')
+                        console.log('remove')
                         if (infowindow){
                            infowindow.close();
                        }
