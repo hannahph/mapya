@@ -8,7 +8,7 @@ var database = require('./cities.json');
 //const crawl = require('./web_scraper.js')
 
 //	Google Cloud API key
-const apiKey = '**ADD API KEY***'
+const apiKey = '**APIKEY**'
 
 // 	Text to send to Google NLP
 //var text = 'this is wrong'

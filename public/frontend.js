@@ -3,6 +3,7 @@ var hotelButtonHtml = '<input type = "text" id="hotelBox" placeholder="Enter Hot
 var latlngbounds = new google.maps.LatLngBounds();
 console.log("LATLONG SET: "+latlngbounds);
 
+
 function changeMap(location) {
 map = new google.maps.Map(document.getElementById('map'), {
     center: location,
@@ -53,11 +54,18 @@ function searchMap(){
         //var newLat = newLatLng.lat;
         //var newLng = newLatLng.lng;
         //changeMap(newLat,newLng);
-        printLocList(dedup_location_response, listprint, 'mylist');
+        //printLocList(dedup_location_response, listprint, 'mylist');
+        printLocTable(dedup_location_response, listprint, 'mytable')
         console.log(dedup_location_response[0].geometry.location);
         changeMap(dedup_location_response[0].geometry.location);
         plotPlaces(dedup_location_response,"red");
         document.getElementById('hotelOption').innerHTML=hotelButtonHtml;
+
+        //document.getElementById('rowid2').addEventListener("mouseover", alertFunction)
+        //document.getElementById('placeid2').addEventListener("mouseover", alertFunction)
+
+
+
     }
     xmlHttp.open("GET", searchURL, true); // true for asynchronous ****Wasn't working until I made this true
     xmlHttp.send();
@@ -76,6 +84,20 @@ function printLocList(li, tag, thisid){
     document.getElementById(thisid).innerHTML=tag;
   };
 
+function printLocTable(li, tag, thisid){
+    tag = "<tr>"
+    for (var i =0; i<li.length; i++){
+        if(li[i]!==null){
+            id = 'rowid' + (i+1)
+            placeid = 'placeid' + (i+1)
+            tag+='<th scope="row" id =' + id + '>' + (i+1) + '</th><td id=' + placeid + '>' + li[i].name + "</td></tr>";
+        }
+    }
+    tag+='<tr>'
+    console.log(tag)
+    document.getElementById(thisid).innerHTML=tag;
+}
+
 
 function plotPlaces(places_list,color){
     console.log(latlngbounds);
@@ -91,8 +113,45 @@ function plotPlaces(places_list,color){
         name = places_list[i].name
         var url= "http://maps.google.com/mapfiles/ms/icons/" + color + "-dot.png";
         console.log(url);
-        marker = new google.maps.Marker({position: position, map:map, title:name, icon:url})
+        marker = new google.maps.Marker({position: position, map:map, title:name, icon:url});
+        var infowindow = new google.maps.InfoWindow();
+        var content = places_list[i].name
+        google.maps.event.addListener(marker, 'mouseover', (function(marker, content){
+            return function(){
+                infowindow.close()
+                infowindow.setContent(content);
+                infowindow.open(map,marker);
+                //windows.push(infowindow)
+                // This doesn't seem to work for some reason **** 
+                google.maps.event.addListener(map,'click',function(infowindow){
+                    if (infowindow){
+                    infowindow.close();
+                    }
+                });
+            };
+            })(marker,content));
+        // Figure out how to close info window on mouse move
         latlngbounds.extend(position);
+        setrowid='rowid'+(i+1)
+        setplaceid = 'placeid'+(i+1)
+        document.getElementById(setrowid).addEventListener("mouseover", function(marker, i){
+            return function(){
+                console.log('alertFunction Activated' + i+1)
+                infowindow.setContent(content);
+                infowindow.open(map,marker);
+                //marker.setAnimation(google.maps.Animation.BOUNCE);
+                //setTimeout("marker.setAnimation(null)", 1520);
+                };
+        }(marker, i));
+        document.getElementById(setplaceid).addEventListener("mouseover", function(marker, i, content){
+            return function(){
+                console.log('alertFunction Activated' + i+1)
+                //marker.setAnimation(google.maps.Animation.BOUNCE);
+                //setTimeout("marker.setAnimation(null)", 1520);
+                infowindow.setContent(content);
+                infowindow.open(map,marker);
+                };
+        }(marker, i, content));    
     }
     map.fitBounds(latlngbounds);
 } 
@@ -136,3 +195,5 @@ function centerMap(){
     xmlHttp.open("GET", searchURL, true); // true for asynchronous ..made this one true too
     xmlHttp.send();
 };
+
+
