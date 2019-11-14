@@ -137,7 +137,7 @@ function plotPlaces(places_list,color){
         latlngbounds.extend(position);
         setrowid='rowid'+(i+1)
         setplaceid = 'placeid'+(i+1)
-        document.getElementById(setrowid).addEventListener("mouseover", function(marker, i){
+        document.getElementById(setrowid).addEventListener("mouseover", function(marker, i, content){
             return function(){
                 console.log('alertFunction Activated' + i+1)
                 infowindow.setContent(content);
@@ -145,7 +145,7 @@ function plotPlaces(places_list,color){
                 //marker.setAnimation(google.maps.Animation.BOUNCE);
                 //setTimeout("marker.setAnimation(null)", 1520);
                 };
-        }(marker, i));
+        }(marker, i, content));
         document.getElementById(setplaceid).addEventListener("mouseover", function(marker, i, content){
             return function(){
                 console.log('alertFunction Activated' + i+1)
