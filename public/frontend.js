@@ -113,7 +113,7 @@ function plotPlaces(places_list,color){
         name = places_list[i].name
         var url= "http://maps.google.com/mapfiles/ms/icons/" + color + "-dot.png";
         console.log(url);
-        marker = new google.maps.Marker({position: position, map:map, title:name, icon:url});
+        marker = new google.maps.Marker({position: position, map:map, icon:url});
         var infowindow = new google.maps.InfoWindow();
         var content = places_list[i].name
         google.maps.event.addListener(marker, 'mouseover', (function(marker, content){
@@ -122,12 +122,15 @@ function plotPlaces(places_list,color){
                 infowindow.setContent(content);
                 infowindow.open(map,marker);
                 //windows.push(infowindow)
-                // This doesn't seem to work for some reason **** 
+                //for some reason this doesn't work with 'mousemove' type - it makes the markers not show up
                 google.maps.event.addListener(map,'click',function(infowindow){
-                    if (infowindow){
-                    infowindow.close();
-                    }
-                });
+                    return function(){
+                        console.log('mousemove')
+                        if (infowindow){
+                           infowindow.close();
+                       }
+                }
+                }(infowindow));
             };
             })(marker,content));
         // Figure out how to close info window on mouse move
