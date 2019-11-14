@@ -36,11 +36,12 @@
 
     <body>
         <div class="jumbotron">
-                <h1>Welcome to MapYa!</h1>
+                <h1 id='mytitle'>Welcome to MapYa!</h1>
                 <h4>We simplify your trip planning experience! Just enter the city and paste the URL for a travel blog and we will find all the places mentioned</h4>
                     <input type = "text" id="searchBox" placeholder="Enter URL">
                     <input type = "text" id="cityBox" placeholder="Enter City">
                     <button onclick = centerMap();searchMap();>Search</button>
+                    <div id='testtext'></div>
                 <!-- I wanted to add a new row here but coulnd't figure out how -->
                     <div id = "hotelOption"></div>
 
@@ -102,7 +103,7 @@
                 //var marker = new google.maps.Marker({position:{lat: -34.380, lng: 150.645}, map:map})
                 } </script>
         
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyArqn8ZfBNUxwRJuhFV1IKvKD3uFP55uS4&callback=initMap"
+        <script src="https://maps.googleapis.com/maps/api/js?key=**APIKEY**&callback=initMap"
     async defer></script>
         <script src='./frontend.js'></script>
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
