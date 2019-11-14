@@ -124,10 +124,14 @@ function plotPlaces(places_list,color){
                 //windows.push(infowindow)
                 // This doesn't seem to work for some reason **** 
                 google.maps.event.addListener(map,'click',function(infowindow){
-                    if (infowindow){
-                    infowindow.close();
-                    }
-                });
+                    return function(){
+                        console.log('remove')
+                        if (infowindow){
+                           infowindow.close();
+                       }
+                }
+                }(infowindow));
+
             };
             })(marker,content));
         // Figure out how to close info window on mouse move
