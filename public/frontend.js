@@ -53,7 +53,8 @@ function searchMap(){
         //var newLat = newLatLng.lat;
         //var newLng = newLatLng.lng;
         //changeMap(newLat,newLng);
-        printLocList(dedup_location_response, listprint, 'mylist');
+        //printLocList(dedup_location_response, listprint, 'mylist');
+        printLocTable(dedup_location_response, listprint, 'mytable')
         console.log(dedup_location_response[0].geometry.location);
         changeMap(dedup_location_response[0].geometry.location);
         plotPlaces(dedup_location_response,"red");
@@ -76,6 +77,18 @@ function printLocList(li, tag, thisid){
     document.getElementById(thisid).innerHTML=tag;
   };
 
+function printLocTable(li, tag, thisid){
+    tag = "<tr>"
+    for (var i =0; i<li.length; i++){
+        if(li[i]!==null){
+            tag+='<th scope="row">' + (i+1) + '</th><td>' + li[i].name + "</td></tr>";
+        }
+    }
+    tag+='<tr>'
+    console.log(tag)
+    document.getElementById(thisid).innerHTML=tag;
+}
+
 
 function plotPlaces(places_list,color){
     console.log(latlngbounds);
@@ -91,7 +104,20 @@ function plotPlaces(places_list,color){
         name = places_list[i].name
         var url= "http://maps.google.com/mapfiles/ms/icons/" + color + "-dot.png";
         console.log(url);
-        marker = new google.maps.Marker({position: position, map:map, title:name, icon:url})
+        marker = new google.maps.Marker({position: position, map:map, title:name, icon:url});
+        var infowindow = new google.maps.InfoWindow();
+        var content = places_list[i].name
+        google.maps.event.addListener(marker, 'mouseover', (function(marker, content){
+            return function(){
+                infowindow.close()
+                infowindow.setContent(content);
+                infowindow.open(map,marker);
+                windows.push(infowindow)
+                google.maps.event.addListener(map,'click',function(){
+                    infowindow.close();
+                });
+            };
+            })(marker,content));
         latlngbounds.extend(position);
     }
     map.fitBounds(latlngbounds);
