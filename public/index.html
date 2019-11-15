@@ -32,9 +32,15 @@
                     padding: 1rem 3rem !important;
                 }
 
-                .jumbotron{
-                    margin-bottom:0 !important;
-                    padding: 1rem 3rem !important;
+                .table-hover tbody{
+                  display:block;
+                  overflow:auto;
+                  height:31.25rem; /* Not sure why this works or if will work on a dif screen size */
+                  width:100%;
+                }
+
+                .table-hover thead tr{
+                  display:block;
                 }
 
               </style>
@@ -47,8 +53,8 @@
                     <input type = "text" id="searchBox" placeholder="Enter URL">
                     <input type = "text" id="cityBox" placeholder="Enter City">
                     <button onclick = centerMap();searchMap();>Search</button>
-                    <div id='testtext'></div>
                 <!-- I wanted to add a new row here but coulnd't figure out how -->
+                    <div id = 'loader' class="p-2 bd-highlight align-items-center"></div>
                     <div id = "hotelOption"></div>
 
                 <!-- <div class = "row">Put Loading Graphic Here</div> -->
@@ -57,13 +63,13 @@
             </div>
         </div>
 
-        <div class="container nopadding", style="height:100%">
+        <div class="container nopadding w-100", style="height:100%">
                 <div class="row", style="height: 100%">
                   <div class="col-7">
                       <div id = 'map'></div>    
                   </div>
-                  <div class="col-5 nopadding">
-                    <div class="pre-scrollable", style = "height:300 px"></div>
+                  <div class="col-5 nopadding overflow-auto">
+                    <div class="pre-scrollable overflow-auto", style = "height:300 px"></div>
                         <table class="table table-hover">
                         <thead>
                             <tr>
@@ -111,7 +117,7 @@
                 //var marker = new google.maps.Marker({position:{lat: -34.380, lng: 150.645}, map:map})
                 } </script>
         
-        <script src="https://maps.googleapis.com/maps/api/js?key=**APIKEY**&callback=initMap"
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfhcM7UDXq3nHnRIy7VHkWwxati7mAsqc&callback=initMap"
     async defer></script>
         <script src='./frontend.js'></script>
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

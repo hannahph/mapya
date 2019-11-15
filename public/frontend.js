@@ -3,7 +3,6 @@ var hotelButtonHtml = '<input type = "text" id="hotelBox" placeholder="Enter Hot
 var latlngbounds = new google.maps.LatLngBounds();
 console.log("LATLONG SET: "+latlngbounds);
 
-
 function changeMap(location) {
 map = new google.maps.Map(document.getElementById('map'), {
     center: location,
@@ -59,6 +58,7 @@ function searchMap(){
         console.log(dedup_location_response[0].geometry.location);
         changeMap(dedup_location_response[0].geometry.location);
         plotPlaces(dedup_location_response,"red");
+        document.getElementById('loader').innerHTML="";
         document.getElementById('hotelOption').innerHTML=hotelButtonHtml;
 
         //document.getElementById('rowid2').addEventListener("mouseover", alertFunction)
@@ -185,6 +185,9 @@ function filterNull(iter){
 
 
 function centerMap(){
+    var loadingHtml = '<div class="spinner-border ml-auto" role="status" aria-hidden="true"></div><strong>   Loading...</strong>';
+    console.log(loadingHtml);
+    document.getElementById('loader').innerHTML=loadingHtml;
     var enteredCity = document.getElementById('cityBox').value;
     var searchURL = '/map?&city='+enteredCity;
     console.log(searchURL);
