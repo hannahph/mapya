@@ -58,7 +58,7 @@ function runER(text, callback){
         })
 
         //***************TESTING PURPOSES - limit results ***********************************
-        //loc_entities_proper = loc_entities_proper.slice(1,10);
+        loc_entities_proper = loc_entities_proper.slice(1,10);
         //***************TESTING PURPOSES - limit results ***********************************
 
         console.log('Proper Location Entities', loc_entities_proper.length)
