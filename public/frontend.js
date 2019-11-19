@@ -34,7 +34,8 @@ function searchMap(){
 
         // remove duplicated finds
         var dedup_location_names = []
-        var dedup_location_response = []
+        //making this a global var
+        dedup_location_response = [];
         for (var i =0; i<location_response.length; i++){
             //console.log(dedup_location_names.includes((location_response[i].names)))
             if (dedup_location_names.includes(location_response[i].name)==false){
@@ -90,12 +91,19 @@ function printLocTable(li, tag, thisid){
         if(li[i]!==null){
             id = 'rowid' + (i+1)
             placeid = 'placeid' + (i+1)
-            tag+='<th scope="row" id =' + id + '>' + (i+1) + '</th><td id=' + placeid + '>' + li[i].name + "</td></tr>";
+            tag+='<th scope="row" id =' + id + '>' + (i+1) + '</th><td id=' + placeid + '>' + li[i].name + "<span class='close' id="+[i]+">          x</span></td></tr>";
         }
     }
     tag+='<tr>'
     console.log(tag)
     document.getElementById(thisid).innerHTML=tag;
+    //click to remove maker using JQuery
+    $(document).ready(function(){
+        $("span").off('click').on('click', function (){
+            console.log(jQuery(this).attr("id"));
+            var idx = jQuery(this).attr("id");
+            removeMarker(idx);
+        });});
 }
 
 
@@ -106,6 +114,11 @@ function plotPlaces(places_list,color){
         latlngbounds = new google.maps.LatLngBounds();
     }
     console.log(latlngbounds)
+    //create new array of all the markers (not for hotel)
+    if(places_list.length>1){
+        marker_array = []
+        console.log("SETTING MARKER ARRAY TO []")
+    }
     for (var i = 0; i<places_list.length; i++){
         //console.log(places_list[i])
         //console.log(places_list[i].geometry.location)
@@ -114,6 +127,10 @@ function plotPlaces(places_list,color){
         var url= "http://maps.google.com/mapfiles/ms/icons/" + color + "-dot.png";
         console.log(url);
         marker = new google.maps.Marker({position: position, map:map, title:name, icon:url});
+        //add markers to array
+        if(places_list.length>1){
+            marker_array.push(marker);
+        }
         var infowindow = new google.maps.InfoWindow();
         var content = places_list[i].name
         google.maps.event.addListener(marker, 'mouseover', (function(marker, content){
@@ -159,6 +176,32 @@ function plotPlaces(places_list,color){
     }
     map.fitBounds(latlngbounds);
 } 
+
+
+function clearMarkers(location_array){
+    for (var i=0; i<location_array.length; i++) {
+        location_array[i].setMap(null);
+      }
+      console.log("MAP CLEARED");
+      console.log(location_array);
+}
+
+
+function removeMarker(idx){
+    //if (marker_array == undefined){
+      //var marker_array = [] 
+   // }
+    clearMarkers(marker_array);
+    var removeID = idx;
+    console.log(dedup_location_response[removeID]);
+    dedup_location_response.splice(removeID,1);
+    marker_array.splice(removeID,1);
+    console.log("NEW LIST")
+    console.log(dedup_location_response);
+    var listprint = ""
+    printLocTable(dedup_location_response, listprint, 'mytable')
+    plotPlaces(dedup_location_response,"red");
+}
 
 function plotHotel(){
     var enteredHotel = document.getElementById('hotelBox').value;
