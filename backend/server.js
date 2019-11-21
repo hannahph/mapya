@@ -25,7 +25,7 @@ app.get('/post/',function(req,res){
             for (i=0; i<returned_locations.length; i++){
                 location_names[i]=suppliedCity+" "+returned_locations[i].name;
             }
-            console.log(location_names);
+            console.log('location names', location_names);
             search_places.basicSearch(location_names,function(err,location_details){
                 console.log(location_details);
                 res.send(JSON.stringify(location_details));
