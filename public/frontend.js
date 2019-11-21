@@ -2,6 +2,7 @@ var map;
 var hotelButtonHtml = '<input type = "text" id="hotelBox" placeholder="Enter Hotel Name"><button onclick = "plotHotel()">Find Hotel</button>';
 var latlngbounds = new google.maps.LatLngBounds();
 console.log("LATLONG SET: "+latlngbounds);
+var city_pos
 
 function changeMap(location) {
 map = new google.maps.Map(document.getElementById('map'), {
@@ -45,8 +46,15 @@ function searchMap(){
                 dedup_location_names.push(location_response[i].name);
             }
         }
+        
+        // also filter by distance here value in the function is the radius allowed in kms 
+        console.log('city position', city_pos)
+        dedup_location_response=dedup_location_response.filter(function(ent){
+            return distanceFilter(ent.geometry.location,10)
+        })
 
         console.log('Deduplicated', dedup_location_names)
+        console.log('distance filtered', dedup_location_response)
 
         //console.log(xmlHttp.responseText);
         //var newLocation = JSON.parse(xmlHttp.responseText)
@@ -122,7 +130,7 @@ function plotPlaces(places_list,color){
     for (var i = 0; i<places_list.length; i++){
         //console.log(places_list[i])
         //console.log(places_list[i].geometry.location)
-        position = places_list[i].geometry.location
+        position = places_list[i].geometry.location        
         name = places_list[i].name
         var url= "http://maps.google.com/mapfiles/ms/icons/" + color + "-dot.png";
         console.log(url);
@@ -239,11 +247,52 @@ function centerMap(){
         var returned_location = JSON.parse(xmlHttp.responseText);
         var city_lat = returned_location[0].geometry.location.lat;
         var city_lng = returned_location[0].geometry.location.lng;
-        var city_pos = {lat: city_lat, lng: city_lng};
+        city_pos = {lat: city_lat, lng: city_lng};
         changeMap(city_pos);
     };
     xmlHttp.open("GET", searchURL, true); // true for asynchronous ..made this one true too
     xmlHttp.send();
 };
 
+function calcDistance(loc1, loc2){
+    // function that returns the distance between two places
+    lat1 = loc1.lat
+    lat2 = loc2.lat
+    lon1= loc1.lng
+    lon2= loc2.lng
+    
+    var R = 6371; // km
+    var φ1 = degrees_to_radians(lat1);
+    var φ2 = degrees_to_radians(lat2);
+    var Δφ = degrees_to_radians(lat2-lat1);
+    var Δλ = degrees_to_radians(lon2-lon1);
 
+    var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+        Math.cos(φ1) * Math.cos(φ2) *
+        Math.sin(Δλ/2) * Math.sin(Δλ/2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    var d = R * c;
+    return d
+}
+
+//console.log(calcDistance(MIT, Harvard))
+
+
+function degrees_to_radians(degrees)
+{
+  var pi = Math.PI;
+  return degrees * (pi/180);
+}
+
+function distanceFilter(loc,radius){
+    //returns True if city is within radius
+    console.log(calcDistance(city_pos, loc))
+    if (calcDistance(city_pos, loc)<radius){
+        console.log(true)
+        return true
+    }
+    else
+        console.log(false)
+        return false
+}
