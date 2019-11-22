@@ -15,41 +15,49 @@ var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 //console.log(search_terms);
 
 function searchPlaces(search_terms,callback){
-    var YOUR_API_KEY ='AIzaSyCfhcM7UDXq3nHnRIy7VHkWwxati7mAsqc';
-    var result_list = []
-   // for (i = 0; i<20; i++){
-    for (i = 0; i < search_terms.length; i++) { 
-        current_search_term = search_terms[i]
-        var place_url = "https://maps.googleapis.com/maps/api/place/textsearch/json?query="+current_search_term+"&key="+YOUR_API_KEY;
-        //TODO: look into region or location/radius to limit results, compared to appending city name
-        //console.log(place_url);
-        var xmlHttp = new XMLHttpRequest();
-        xmlHttp.onreadystatechange = function() { 
-            var place_search_results = JSON.parse(xmlHttp.responseText);
-            //console.log(place_search_results.results[0]);
-            if (place_search_results.results[0]==undefined){
-                console.log(current_search_term + " is not a valid search");
-            } else{
-                var place_id = place_search_results.results[0].place_id;
-                //console.log(place_search_results.results[0].name);
-                var place_detail_url = "https://maps.googleapis.com/maps/api/place/details/json?place_id="+place_id+"&fields=formatted_address,formatted_phone_number,rating,types,geometry/location,opening_hours/weekday_text&key="+YOUR_API_KEY;
-                //console.log(place_detail_url)
-                var xmlHttp2 = new XMLHttpRequest();
-                xmlHttp2.onreadystatechange = function() { 
-                    place_details = JSON.parse(xmlHttp2.responseText);
-                    //console.log(place_details.result);
-                    result_list[i] = place_details.result
-                    result_list[i].name = place_search_results.results[0].name
-                }
-                xmlHttp2.open("GET", place_detail_url, false);
-                xmlHttp2.send();
-        }};
-        xmlHttp.open("GET", place_url, false);
-        xmlHttp.send();
-        
-    }
-    callback(null, result_list);
-}
+  var YOUR_API_KEY ='AIzaSyDYvaowyxOC6QD5P5zcrVeSAzLxI_ZmCGg';
+  var place_id_list = []
+  var promise_list = []
+  var detail_promise_list = [];
+  for (i = 0; i < search_terms.length; i++) { 
+      current_search_term = search_terms[i]
+      var place_url = "https://maps.googleapis.com/maps/api/place/textsearch/json?query="+current_search_term+"&key="+YOUR_API_KEY;
+      promise_list.push(get(place_url))
+  }
+  Promise.all(promise_list).then(function(values) {
+    console.log('searches finished')
+    //console.log(values);
+    for (i = 0; i<values.length; i++){
+        console.log(values[i])
+        if(values[i]==null){
+            console.log('undefined ' + i)
+        }
+        else if (values[i].results==undefined){
+          console.log('undefined ' + i)
+        }
+        else if (values[i].results[0]==undefined){
+         console.log('undefined '+ i);
+       }
+         else{
+          place_id_list.push(values[i].results[0].place_id)
+       }
+       }
+    console.log('place ids');   
+    console.log(place_id_list);
+    return(place_id_list);
+      }).then(function(place_id_list){
+        console.log(place_id_list);
+        for (i = 0; i<place_id_list.length; i++){
+          var place_id = place_id_list[i];
+          console.log("IN THIS LOOP");
+          var place_detail_url = "https://maps.googleapis.com/maps/api/place/details/json?place_id="+place_id+"&fields=name,formatted_address,formatted_phone_number,rating,types,geometry/location,opening_hours/weekday_text,website&key="+YOUR_API_KEY;
+          console.log(place_detail_url);
+          detail_promise_list.push(get(place_detail_url));
+        }
+        Promise.all(detail_promise_list).then(function(values){
+          console.log('detail search finished');
+          callback(null, values);
+        })})};
 
 
 function basicSearch(search_terms,callback){
@@ -57,7 +65,7 @@ function basicSearch(search_terms,callback){
     var promise_list = []
    // for (i = 0; i<20; i++){
     for (i = 0; i < search_terms.length; i++) {
-        var YOUR_API_KEY ='AIzaSyCfhcM7UDXq3nHnRIy7VHkWwxati7mAsqc';
+        var YOUR_API_KEY ='AIzaSyDYvaowyxOC6QD5P5zcrVeSAzLxI_ZmCGg';
         console.log('searching', search_terms[i])
         //result_list.push(basicSingle(search_terms[i])) 
         current_search_term = search_terms[i]

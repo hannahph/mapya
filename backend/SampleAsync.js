@@ -26,8 +26,8 @@ var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
 // this part uses the actual places code 
 
-var YOUR_API_KEY ='AIzaSyCfhcM7UDXq3nHnRIy7VHkWwxati7mAsqc';
-search_terms = ["Vancouver", "Toronto", "Boston", "Copenhagen", "London", "New York", "France", "Paris", "San Francisco"]
+var YOUR_API_KEY ='AIzaSyDYvaowyxOC6QD5P5zcrVeSAzLxI_ZmCGg';
+search_terms = ["Copenhagen City Hall", "abcxyz", "Copenhagen Tivoli Gardens", "New York Statute of Liberty", "London Tower", "Eiffel Tower Paris", "MIT Sloan School of Management", "The Design Museum Copenhagen"]
 //search_terms = ["Vancouver"]
 results = []
 place_results_to_FE = []
@@ -59,7 +59,7 @@ Promise.all(results).then(function(values) {
 });
 }
 
-tryAsync()
+//tryAsync()
 
 function regular(){
     return new Promise (resolve =>{
@@ -148,3 +148,60 @@ function get(url){
   
     });
   };
+
+//testing detailed search
+
+function searchPlaces(search_terms,callback){
+  var YOUR_API_KEY ='AIzaSyDYvaowyxOC6QD5P5zcrVeSAzLxI_ZmCGg';
+  var place_id_list = []
+  var promise_list = []
+  var result_list = [];
+  var detail_promise_list = [];
+  for (i = 0; i < search_terms.length; i++) { 
+      current_search_term = search_terms[i]
+      var place_url = "https://maps.googleapis.com/maps/api/place/textsearch/json?query="+current_search_term+"&key="+YOUR_API_KEY;
+      promise_list.push(get(place_url))
+  }
+  Promise.all(promise_list).then(function(values) {
+    console.log('searches finished')
+    //console.log(values);
+    for (i = 0; i<values.length; i++){
+        console.log(values[i])
+        if(values[i]==null){
+            console.log('undefined1')
+        }
+        if (values[i].results==undefined){
+          console.log('undefined2')
+        }
+        else if (values[i].results[0]==undefined){
+         console.log('undefined3')
+       }
+         else{
+          place_id_list.push(values[i].results[0].place_id)
+       }
+       }
+    console.log('place ids');   
+    console.log(place_id_list);
+    return(place_id_list);
+      }).then(function(place_id_list){
+        console.log(place_id_list);
+        for (i = 0; i<place_id_list.length; i++){
+          var place_id = place_id_list[i];
+          console.log("IN THIS LOOP");
+          var place_detail_url = "https://maps.googleapis.com/maps/api/place/details/json?place_id="+place_id+"&fields=formatted_address,formatted_phone_number,rating,types,geometry/location,opening_hours/weekday_text&key="+YOUR_API_KEY;
+          console.log(place_detail_url);
+          detail_promise_list.push(get(place_detail_url));
+        }
+        Promise.all(detail_promise_list).then(function(values){
+          console.log('detail search finished');
+          callback(null, values);
+       //  }
+        })})};
+  //    })};
+
+
+  
+
+searchPlaces(search_terms,function(err,location_details){
+  console.log(location_details);
+  })

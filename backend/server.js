@@ -26,7 +26,7 @@ app.get('/post/',function(req,res){
                 location_names[i]=suppliedCity+" "+returned_locations[i].name;
             }
             console.log('location names', location_names);
-            search_places.basicSearch(location_names,function(err,location_details){
+            search_places.searchPlaces(location_names,function(err,location_details){
                 console.log(location_details);
                 res.send(JSON.stringify(location_details));
             });
@@ -50,7 +50,7 @@ app.get('/map/',function(req,res){
 app.get('/hotel/',function(req,res){
     var suppliedHotel = req.query.hotel + " " + req.query.city;
     console.log("ADDING HOTEL: " + suppliedHotel)
-    search_places.basicSearch([suppliedHotel],function(err,location_details){
+    search_places.searchPlaces([suppliedHotel],function(err,location_details){
         console.log(JSON.stringify(location_details));
         res.send(JSON.stringify(location_details));
     });

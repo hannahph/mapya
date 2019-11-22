@@ -19,6 +19,7 @@ function searchMap(){
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() { 
         location_response = JSON.parse(xmlHttp.responseText)
+        console.log("LOCATION RESPONSE");
         console.log(location_response)
         //console.log(typeof location_response)
         //console.log(location_response[0].name)
@@ -30,7 +31,7 @@ function searchMap(){
 
         //filter out the name of the city
         location_response = location_response.filter(function(ent){
-            return ent.name!=enteredCity;
+            return ent.result.name!=enteredCity;
         })
 
         // remove duplicated finds
@@ -39,22 +40,22 @@ function searchMap(){
         dedup_location_response = [];
         for (var i =0; i<location_response.length; i++){
             //console.log(dedup_location_names.includes((location_response[i].names)))
-            if (dedup_location_names.includes(location_response[i].name)==false){
+            if (dedup_location_names.includes(location_response[i].result.name)==false){
                 //console.log(dedup_location_names)
                 //console.log('in if', location_response[i].name)
                 dedup_location_response.push(location_response[i]);
-                dedup_location_names.push(location_response[i].name);
+                dedup_location_names.push(location_response[i].result.name);
             }
         }
         
         // also filter by distance here value in the function is the radius allowed in kms 
         console.log('city position', city_pos)
         dedup_location_response=dedup_location_response.filter(function(ent){
-            return distanceFilter(ent.geometry.location,10)
+            return distanceFilter(ent.result.geometry.location,10)
         })
 
         console.log('Deduplicated', dedup_location_names)
-        console.log('distance filtered', dedup_location_response)
+    //    console.log('distance filtered', dedup_location_response)
 
         //console.log(xmlHttp.responseText);
         //var newLocation = JSON.parse(xmlHttp.responseText)
@@ -64,8 +65,8 @@ function searchMap(){
         //changeMap(newLat,newLng);
         //printLocList(dedup_location_response, listprint, 'mylist');
         printLocTable(dedup_location_response, listprint, 'mytable')
-        console.log(dedup_location_response[0].geometry.location);
-        changeMap(dedup_location_response[0].geometry.location);
+        console.log(dedup_location_response[0].result.geometry.location);
+        changeMap(dedup_location_response[0].result.geometry.location);
         plotPlaces(dedup_location_response,"red");
         document.getElementById('loader').innerHTML="";
         document.getElementById('hotelOption').innerHTML=hotelButtonHtml;
@@ -99,10 +100,21 @@ function printLocTable(li, tag, thisid){
         if(li[i]!==null){
             id = 'rowid' + (i+1)
             placeid = 'placeid' + (i+1)
-            tag+='<th scope="row" id =' + id + '>' + (i+1) + '</th><td id=' + placeid + '>' + li[i].name + "<span class='close' id="+[i]+">          x</span></td></tr>";
+            typeid = 'typeid' + (i+1)
+            loc_type = li[i].result.types[0].replace("_"," ").replace(/^./, li[i].result.types[0][0].toUpperCase())
+            if (li[i].result.opening_hours == undefined){
+                var open_hours = " "
+            }
+            else{
+                console.log(String(li[i].result.opening_hours.weekday_text).replace(/,/g,"<br>"))
+                var open_hours = String(li[i].result.opening_hours.weekday_text).replace(/,/g,"<br>")
+            }
+            var website = li[i].result.website
+            tag+='<th class = "parent" scope="row" id =' + id + '>' + (i+1) + '</th><td id=' + placeid + '>' + li[i].result.name + "</td><td id=" + typeid +">"+loc_type+"<span class='close' id="+[i]+">          x</span></td></tr><tr class='child"+id+"' style='display:none;'><td> </td><td colspan='2'><p><a href="+website+">Visit Website</a><br><br>"+open_hours+"</p></td></tr>";
         }
     }
     tag+='<tr>'
+    tag = '<tr><th scope="col">#</th><th scope="col">Place</th><th scope="col">Type</th></tr>'+tag
     console.log(tag)
     document.getElementById(thisid).innerHTML=tag;
     //click to remove maker using JQuery
@@ -112,26 +124,35 @@ function printLocTable(li, tag, thisid){
             var idx = jQuery(this).attr("id");
             removeMarker(idx);
         });});
+    $(document).ready(function(){
+        $(".parent").off('click').on('click', function (){
+            console.log(jQuery(this).attr("id"));
+            var child_class = ".child"+jQuery(this).attr("id")
+            console.log(child_class);
+            $(child_class).toggle();
+        });});
 }
 
 
 function plotPlaces(places_list,color){
-    console.log(latlngbounds);
+    //console.log(latlngbounds);
+    latlngbounds = new google.maps.LatLngBounds();
     if(latlngbounds == undefined){
         console.log("in undefined loop");
         latlngbounds = new google.maps.LatLngBounds();
     }
-    console.log(latlngbounds)
+    //console.log(latlngbounds)
     //create new array of all the markers (not for hotel)
     if(places_list.length>1){
         marker_array = []
         console.log("SETTING MARKER ARRAY TO []")
     }
+    console.log(places_list);
     for (var i = 0; i<places_list.length; i++){
         //console.log(places_list[i])
         //console.log(places_list[i].geometry.location)
-        position = places_list[i].geometry.location        
-        name = places_list[i].name
+        position = places_list[i].result.geometry.location        
+        name = places_list[i].result.name
         var url= "http://maps.google.com/mapfiles/ms/icons/" + color + "-dot.png";
         console.log(url);
         marker = new google.maps.Marker({position: position, map:map, title:name, icon:url});
@@ -140,7 +161,7 @@ function plotPlaces(places_list,color){
             marker_array.push(marker);
         }
         var infowindow = new google.maps.InfoWindow();
-        var content = places_list[i].name
+        var content = places_list[i].result.name
         google.maps.event.addListener(marker, 'mouseover', (function(marker, content){
             return function(){
                 infowindow.close()
@@ -163,6 +184,7 @@ function plotPlaces(places_list,color){
         latlngbounds.extend(position);
         setrowid='rowid'+(i+1)
         setplaceid = 'placeid'+(i+1)
+        settypeid = 'typeid'+(i+1)
         document.getElementById(setrowid).addEventListener("mouseover", function(marker, i, content){
             return function(){
                 console.log('alertFunction Activated' + i+1)
@@ -181,8 +203,20 @@ function plotPlaces(places_list,color){
                 infowindow.open(map,marker);
                 };
         }(marker, i, content));    
+        document.getElementById(settypeid).addEventListener("mouseover", function(marker, i, content){
+            return function(){
+                console.log('alertFunction Activated' + i+1)
+                //marker.setAnimation(google.maps.Animation.BOUNCE);
+                //setTimeout("marker.setAnimation(null)", 1520);
+                infowindow.setContent(content);
+                infowindow.open(map,marker);
+                };
+        }(marker, i, content));    
     }
-    map.fitBounds(latlngbounds);
+    //console.log(latlngbounds);
+    if(places_list.length>1){
+        map.fitBounds(latlngbounds);
+    }
 } 
 
 
@@ -194,6 +228,16 @@ function clearMarkers(location_array){
       console.log(location_array);
 }
 
+function clearOnSearch(){
+    document.getElementById('hotelOption').innerHTML=""
+    if (typeof marker_array == 'undefined'){
+        console.log("marker_array undefined")
+        return false;
+    }
+    else{
+        clearMarkers(marker_array);
+    }
+}
 
 function removeMarker(idx){
     //if (marker_array == undefined){
@@ -273,6 +317,7 @@ function calcDistance(loc1, loc2){
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
     var d = R * c;
+    console.log(d);
     return d
 }
 
