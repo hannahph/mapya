@@ -26,7 +26,7 @@ var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
 // this part uses the actual places code 
 
-var YOUR_API_KEY ='AIzaSyDYvaowyxOC6QD5P5zcrVeSAzLxI_ZmCGg';
+var YOUR_API_KEY ='**API KEY**';
 search_terms = ["Copenhagen City Hall", "abcxyz", "Copenhagen Tivoli Gardens", "New York Statute of Liberty", "London Tower", "Eiffel Tower Paris", "MIT Sloan School of Management", "The Design Museum Copenhagen"]
 //search_terms = ["Vancouver"]
 results = []
@@ -152,7 +152,7 @@ function get(url){
 //testing detailed search
 
 function searchPlaces(search_terms,callback){
-  var YOUR_API_KEY ='AIzaSyDYvaowyxOC6QD5P5zcrVeSAzLxI_ZmCGg';
+  var YOUR_API_KEY ='**API KEY**';
   var place_id_list = []
   var promise_list = []
   var result_list = [];
