@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+            <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"> -->
             <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">  
             <link rel="stylesheet" href="https://bootswatch.com/4/minty/bootstrap.min.css", type="text/css">
 
@@ -17,6 +17,7 @@
                 /* Optional: Makes the sample page fill the window. */
                 html, body {
                   height: 100%;
+                  width: 100%;
                   margin: 0;
                   padding: 0;
                 }
@@ -54,18 +55,95 @@
 
                 .close:hover {background: #bbb}
 
+                .ip2 {
+                  border-radius: 15px;
+                  border: 2px solid grey;
+                  padding: 20px; 
+                  width: 200px;
+                  height: 12px;    
+                }
+
+                .btn-2 {
+                  background-color: grey;
+                  border: none;
+                  color: white;
+                  padding: 10px 24px;
+                  text-align: center;
+                  text-decoration: none;
+                  display: inline-block;
+                  font-size: 16px;  
+                  border-radius: 15px;
+                }
+
+                .btn-3 {
+                  background-color: grey;
+                  border: none;
+                  color: white;
+                  padding: 10px 24px;
+                  text-align: center;
+                  text-decoration: none;
+                  display: inline-block;
+                  font-size: 16px;  
+                  border-radius: 15px;
+                  float: right;
+                }
+
+                .modal {
+                  display: none; /* Hidden by default */
+                  position: fixed; /* Stay in place */
+                  z-index: 1; /* Sit on top */
+                  left: 0;
+                  top: 0;
+                  width: 100%; /* Full width */
+                  height: 100%; /* Full height */
+                  overflow: auto; /* Enable scroll if needed */
+                  background-color: rgb(0,0,0); /* Fallback color */
+                  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+                }
+
+                /* Modal Content/Box */
+                .modal-content {
+                  background-color: #fefefe;
+                  margin: 15% auto; /* 15% from the top and centered */
+                  padding: 20px;
+                  border: 1px solid #888;
+                  width: 40%; /* Could be more or less, depending on screen size */
+                }
+
+                /* The Close Button */
+                .close {
+                  color: #aaa;
+                  float: right;
+                  font-size: 28px;
+                  font-weight: bold;
+                }
+
+                .close:hover,
+                .close:focus {
+                  color: black;
+                  text-decoration: none;
+                  cursor: pointer;
+                }
+
               </style>
     </head>
 
     <body>
         <div class="jumbotron">
+                <button class = "btn-3" id = "myBtn">Help</button>
                 <h1 id='mytitle'>Welcome to MapYa!</h1>
                 <h4>We simplify your trip planning experience! Just enter the city and paste the URL for a travel blog and we will find all the places mentioned</h4>
-                    <input type = "text" id="searchBox" placeholder="Enter URL">
-                    <input type = "text" id="cityBox" placeholder="Enter City">
-                    <button onclick = clearOnSearch();centerMap();searchMap();>Search</button>
-                    <div id = 'loader' class="p-2 bd-highlight align-items-center"></div>
-                    <div id = "hotelOption"></div>
+                    <div class = "row">
+                      <div class = "col-10">
+                        <input class = "ip2" type = "text" id="searchBox" placeholder="Enter URL">
+                        <input class = "ip2" type = "text" id="cityBox" placeholder="Enter City">
+                        <button class = "btn-2" onclick = clearOnSearch();centerMap();runSearch();>Search</button>
+                        <div id = 'loader' class="p-2 bd-highlight align-items-center"></div>
+                        <div id = "hotelOption"></div>
+                      </div>
+                    <div class = "col-2">
+                    </div>
+                  </div>
 
 
 
@@ -73,13 +151,13 @@
         </div>
 
         <div class="container nopadding w-100", style="height:100%">
-                <div class="row", style="height: 100%">
+                <div class="row", style="height: 100%; width: 100%">
                   <div class="col-7">
                       <div id = 'map'></div>    
                   </div>
-                  <div class="col-5 nopadding overflow-auto">
-                    <div class="pre-scrollable overflow-auto", style = "height:300 px"></div>
-                        <table class="table table-hover", id='mytable'>
+                  <div class="col-5 nopadding overflow-auto", style = "width: 100%">
+                    <div class="pre-scrollable overflow-auto", style = "height:300 px; width: 100%"></div>
+                        <table class="table table-hover", id='mytable' style = "table-layout: fixed; width:100%">
                         
                             <tr>
                                 <th scope="col">#</th>
@@ -94,8 +172,19 @@
                 </div>
               </div>
 
-      
 
+
+          <!-- The Modal -->
+          <div id="myModal" class="modal">
+
+            <!-- Modal content -->
+            <div class="modal-content">
+              <span class="close">&times;</span>
+              <p>Not sure how it works? Try it with one of our top picks for London - "The Blonde Abroad"</p>
+              <button class = "btn-2" onclick = tryit();>Try It!</button>
+            </div>
+
+          </div>
      
 
 
@@ -114,8 +203,37 @@
                         align: 'right'
                     });
                 } </script>
+
+        <script>
+                    // Get the modal
+            var modal = document.getElementById("myModal");
+
+            // Get the button that opens the modal
+            var btn = document.getElementById("myBtn");
+
+            // Get the <span> element that closes the modal
+            var span = document.getElementsByClassName("close")[0];
+
+            // When the user clicks on the button, open the modal
+            btn.onclick = function() {
+              modal.style.display = "block";
+            }
+
+            // When the user clicks on <span> (x), close the modal
+            span.onclick = function() {
+              modal.style.display = "none";
+            }
+
+            // When the user clicks anywhere outside of the modal, close it
+            window.onclick = function(event) {
+              if (event.target == modal) {
+                modal.style.display = "none";
+              }
+            }
         
-        <script src="https://maps.googleapis.com/maps/api/js?key=**API KEY**&callback=initMap"
+        </script>
+        
+        <script src="https://maps.googleapis.com/maps/api/js?key=**APIKEY**&callback=initMap"
     async defer></script>
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>    
         <script src='./frontend.js'></script>

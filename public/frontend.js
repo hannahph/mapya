@@ -1,8 +1,12 @@
 var map;
-var hotelButtonHtml = '<input type = "text" id="hotelBox" placeholder="Enter Hotel Name"><button onclick = "plotHotel()">Find Hotel</button>';
+var hotelButtonHtml = '<input type = "text" class = "ip2" id="hotelBox" placeholder="Enter Hotel Name"> <button class="btn-2" onclick = "plotHotel()">Find Hotel</button>';
 var latlngbounds = new google.maps.LatLngBounds();
 console.log("LATLONG SET: "+latlngbounds);
 var city_pos
+var testURL
+var testCity
+var tryit=false
+var dedup_location_response
 
 function changeMap(location) {
 map = new google.maps.Map(document.getElementById('map'), {
@@ -11,9 +15,15 @@ map = new google.maps.Map(document.getElementById('map'), {
     });
 }
 
-function searchMap(){
+function runSearch(){
+    // here take out the enteredURL enteredCity part... 
     var enteredURL = document.getElementById('searchBox').value;
     var enteredCity = document.getElementById('cityBox').value; 
+    searchMap(enteredURL, enteredCity)
+}
+
+function searchMap(enteredURL, enteredCity){
+    console.log(enteredURL, enteredCity)
     var searchURL = '/post?Url='+encodeURI(enteredURL.toString())+"&city="+enteredCity;
     console.log(searchURL);
     var xmlHttp = new XMLHttpRequest();
@@ -67,9 +77,10 @@ function searchMap(){
         printLocTable(dedup_location_response, listprint, 'mytable')
         console.log(dedup_location_response[0].result.geometry.location);
         changeMap(dedup_location_response[0].result.geometry.location);
-        plotPlaces(dedup_location_response,"red");
+        plotPlaces(dedup_location_response, "none");
         document.getElementById('loader').innerHTML="";
         document.getElementById('hotelOption').innerHTML=hotelButtonHtml;
+        
 
         //document.getElementById('rowid2').addEventListener("mouseover", alertFunction)
         //document.getElementById('placeid2').addEventListener("mouseover", alertFunction)
@@ -110,7 +121,7 @@ function printLocTable(li, tag, thisid){
                 var open_hours = String(li[i].result.opening_hours.weekday_text).replace(/,/g,"<br>")
             }
             var website = li[i].result.website
-            tag+='<th class = "parent" scope="row" id =' + id + '>' + (i+1) + '</th><td id=' + placeid + '>' + li[i].result.name + "</td><td id=" + typeid +">"+loc_type+"<span class='close' id="+[i]+">          x</span></td></tr><tr class='child"+id+"' style='display:none;'><td> </td><td colspan='2'><p><a href="+website+">Visit Website</a><br><br>"+open_hours+"</p></td></tr>";
+            tag+='<th class = "parent" scope="row" id =' + id + '>' + (i+1) + '</th><td id=' + placeid + '>' + li[i].result.name + "</td><td id=" + typeid +">"+loc_type+"      "+"<span class='close' id="+[i]+">          x</span></td></tr><tr class='child"+id+"' style='display:none;'><td> </td><td colspan='2'><p><a href="+website+">Visit Website</a><br><br>"+open_hours+"</p></td></tr>";
         }
     }
     tag+='<tr>'
@@ -134,7 +145,7 @@ function printLocTable(li, tag, thisid){
 }
 
 
-function plotPlaces(places_list,color){
+function plotPlaces(places_list, hotelid){
     //console.log(latlngbounds);
     latlngbounds = new google.maps.LatLngBounds();
     if(latlngbounds == undefined){
@@ -153,6 +164,12 @@ function plotPlaces(places_list,color){
         //console.log(places_list[i].geometry.location)
         position = places_list[i].result.geometry.location        
         name = places_list[i].result.name
+        if (i==hotelid){
+            color = "blue"
+        }
+        else{
+            color = "red"
+        }
         var url= "http://maps.google.com/mapfiles/ms/icons/" + color + "-dot.png";
         console.log(url);
         marker = new google.maps.Marker({position: position, map:map, title:name, icon:url});
@@ -187,7 +204,7 @@ function plotPlaces(places_list,color){
         settypeid = 'typeid'+(i+1)
         document.getElementById(setrowid).addEventListener("mouseover", function(marker, i, content){
             return function(){
-                console.log('alertFunction Activated' + i+1)
+                //console.log('alertFunction Activated' + i+1)
                 infowindow.setContent(content);
                 infowindow.open(map,marker);
                 //marker.setAnimation(google.maps.Animation.BOUNCE);
@@ -196,7 +213,7 @@ function plotPlaces(places_list,color){
         }(marker, i, content));
         document.getElementById(setplaceid).addEventListener("mouseover", function(marker, i, content){
             return function(){
-                console.log('alertFunction Activated' + i+1)
+                //console.log('alertFunction Activated' + i+1)
                 //marker.setAnimation(google.maps.Animation.BOUNCE);
                 //setTimeout("marker.setAnimation(null)", 1520);
                 infowindow.setContent(content);
@@ -205,7 +222,7 @@ function plotPlaces(places_list,color){
         }(marker, i, content));    
         document.getElementById(settypeid).addEventListener("mouseover", function(marker, i, content){
             return function(){
-                console.log('alertFunction Activated' + i+1)
+                //console.log('alertFunction Activated' + i+1)
                 //marker.setAnimation(google.maps.Animation.BOUNCE);
                 //setTimeout("marker.setAnimation(null)", 1520);
                 infowindow.setContent(content);
@@ -262,8 +279,16 @@ function plotHotel(){
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() { 
         location_response = JSON.parse(xmlHttp.responseText)
-        console.log(location_response);
-        plotPlaces(location_response,"blue");
+        console.log('hotel', location_response)
+        clearMarkers(marker_array)
+        var listprint = ""
+        location_response[0].result.types[0] = "Your Hotel"
+        all_loc_w_hotel = [location_response[0]]
+        all_loc_w_hotel = all_loc_w_hotel.concat(dedup_location_response)
+        printLocTable(all_loc_w_hotel, listprint, 'mytable')
+        //console.log(dedup_location_response[0].result.geometry.location);
+        changeMap(all_loc_w_hotel[0].result.geometry.location);
+        plotPlaces(all_loc_w_hotel, 0);
     };
     xmlHttp.open("GET", searchURL, true); // true for asynchronous ..made this one true too
     xmlHttp.send();
@@ -278,12 +303,16 @@ function filterNull(iter){
         return true
 }
 
-
 function centerMap(){
     var loadingHtml = '<div class="spinner-border ml-auto" role="status" aria-hidden="true"></div><strong>   Loading...</strong>';
     console.log(loadingHtml);
     document.getElementById('loader').innerHTML=loadingHtml;
-    var enteredCity = document.getElementById('cityBox').value;
+    if (tryit==true){
+        var enteredCity = testCity
+    }
+    else{
+        var enteredCity = document.getElementById('cityBox').value;
+    }
     var searchURL = '/map?&city='+enteredCity;
     console.log(searchURL);
     var xmlHttp = new XMLHttpRequest();
@@ -340,4 +369,13 @@ function distanceFilter(loc,radius){
     else
         console.log(false)
         return false
+}
+
+function tryit(){
+    tryit=true
+    modal.style.display = "none";
+    testURL='https://theblondeabroad.com/ultimate-london-travel-guide/'
+    testCity = 'London'
+    centerMap()
+    searchMap(testURL, testCity)
 }
