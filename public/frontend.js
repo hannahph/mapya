@@ -19,6 +19,7 @@ function runSearch(){
     // here take out the enteredURL enteredCity part... 
     var enteredURL = document.getElementById('searchBox').value;
     var enteredCity = document.getElementById('cityBox').value; 
+    console.log(enteredCity);
     searchMap(enteredURL, enteredCity)
 }
 
@@ -107,6 +108,7 @@ function printLocList(li, tag, thisid){
 
 function printLocTable(li, tag, thisid){
     tag = "<tr>"
+    collapse_flag = [];
     for (var i =0; i<li.length; i++){
         if(li[i]!==null){
             id = 'rowid' + (i+1)
@@ -120,12 +122,14 @@ function printLocTable(li, tag, thisid){
                 console.log(String(li[i].result.opening_hours.weekday_text).replace(/,/g,"<br>"))
                 var open_hours = String(li[i].result.opening_hours.weekday_text).replace(/,/g,"<br>")
             }
-            var website = li[i].result.website
-            tag+='<th class = "parent" scope="row" id =' + id + '>' + (i+1) + '</th><td id=' + placeid + '>' + li[i].result.name + "</td><td id=" + typeid +">"+loc_type+"      "+"<span class='close' id="+[i]+">          x</span></td></tr><tr class='child"+id+"' style='display:none;'><td> </td><td colspan='2'><p><a href="+website+">Visit Website</a><br><br>"+open_hours+"</p></td></tr>";
+            var website = li[i].result.website;
+            var collapse_icon = '<img src="iconfinder_down4_172458.png" width="15" height="15"></img>';
+            collapse_flag[i]=1;
+            tag+='<th class = "parent" scope="row" id =' + id + '>' + collapse_icon + '</th><td id=' + placeid + '>' + li[i].result.name + "</td><td id=" + typeid +">"+loc_type+"      "+"<span class='close' id="+[i]+">          x</span></td></tr><tr class='child"+id+"' style='display:none;'><td> </td><td colspan='2'><p><a href="+website+">Visit Website</a><br><br>"+open_hours+"</p></td></tr>";
         }
     }
     tag+='<tr>'
-    tag = '<tr><th scope="col">#</th><th scope="col">Place</th><th scope="col">Type</th></tr>'+tag
+    tag = '<tr><th scope="col"> </th><th scope="col">Place</th><th scope="col">Type</th></tr>'+tag
     console.log(tag)
     document.getElementById(thisid).innerHTML=tag;
     //click to remove maker using JQuery
@@ -141,6 +145,17 @@ function printLocTable(li, tag, thisid){
             var child_class = ".child"+jQuery(this).attr("id")
             console.log(child_class);
             $(child_class).toggle();
+            var row_num = jQuery(this).attr("id").replace( /^\D+/g, '');
+            console.log(row_num)
+            console.log(collapse_flag[row_num])
+            collapse_flag[row_num] = collapse_flag[row_num]*-1
+            if (collapse_flag[row_num] == 1){
+                collapse_icon = '<img src="iconfinder_down4_172458.png" width="15" height="15"></img>';
+            }
+            else{
+                collapse_icon = '<img src="iconfinder_up4_172615.png" width="15" height="15"></img>';
+            }
+            document.getElementById(jQuery(this).attr("id")).innerHTML = collapse_icon;
         });});
 }
 
@@ -307,12 +322,13 @@ function centerMap(){
     var loadingHtml = '<div class="spinner-border ml-auto" role="status" aria-hidden="true"></div><strong>   Loading...</strong>';
     console.log(loadingHtml);
     document.getElementById('loader').innerHTML=loadingHtml;
-    if (tryit==true){
-        var enteredCity = testCity
-    }
-    else{
-        var enteredCity = document.getElementById('cityBox').value;
-    }
+    //if (tryit==true){
+     //   var enteredCity = testCity
+    //}
+    //else{
+    var enteredCity = document.getElementById('cityBox').value;
+    console.log(enteredCity);
+   // }
     var searchURL = '/map?&city='+enteredCity;
     console.log(searchURL);
     var xmlHttp = new XMLHttpRequest();
@@ -346,7 +362,7 @@ function calcDistance(loc1, loc2){
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
     var d = R * c;
-    console.log(d);
+   // console.log(d);
     return d
 }
 
@@ -361,9 +377,9 @@ function degrees_to_radians(degrees)
 
 function distanceFilter(loc,radius){
     //returns True if city is within radius
-    console.log(calcDistance(city_pos, loc))
+   // console.log(calcDistance(city_pos, loc))
     if (calcDistance(city_pos, loc)<radius){
-        console.log(true)
+     //   console.log(true)
         return true
     }
     else
@@ -374,8 +390,10 @@ function distanceFilter(loc,radius){
 function tryit(){
     tryit=true
     modal.style.display = "none";
-    testURL='https://theblondeabroad.com/ultimate-london-travel-guide/'
+    testURL='https://www.ontheluce.com/london-on-a-budget/'
     testCity = 'London'
+    document.getElementById("searchBox").value=testURL
+    document.getElementById("cityBox").value=testCity
     centerMap()
     searchMap(testURL, testCity)
 }

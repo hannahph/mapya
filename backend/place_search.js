@@ -15,7 +15,7 @@ var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 //console.log(search_terms);
 
 function searchPlaces(search_terms,callback){
-  var YOUR_API_KEY ='**APIKEY**';
+  var YOUR_API_KEY ='**API KEY**';
   var place_id_list = []
   var promise_list = []
   var detail_promise_list = [];
@@ -65,7 +65,7 @@ function basicSearch(search_terms,callback){
     var promise_list = []
    // for (i = 0; i<20; i++){
     for (i = 0; i < search_terms.length; i++) {
-        var YOUR_API_KEY ='AIzaSyArqn8ZfBNUxwRJuhFV1IKvKD3uFP55uS4';
+        var YOUR_API_KEY ='**API KEY**';
         console.log('searching', search_terms[i])
         //result_list.push(basicSingle(search_terms[i])) 
         current_search_term = search_terms[i]
