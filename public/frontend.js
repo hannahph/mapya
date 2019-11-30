@@ -1,5 +1,5 @@
 var map;
-var hotelButtonHtml = '<input type = "text" class = "ip2" id="hotelBox" placeholder="Enter Hotel Name"> <button class="btn-2" onclick = "plotHotel()">Find Hotel</button>';
+var hotelButtonHtml = '<input type = "text" class = "ip2" id="hotelBox" placeholder="Enter Hotel Name"> <button class="btn-2" id = "hotelSearchBtn">Find Hotel</button>';
 var latlngbounds = new google.maps.LatLngBounds();
 console.log("LATLONG SET: "+latlngbounds);
 var city_pos
@@ -7,6 +7,7 @@ var testURL
 var testCity
 var tryit=false
 var dedup_location_response
+var all_loc_w_hotel
 
 function changeMap(location) {
 map = new google.maps.Map(document.getElementById('map'), {
@@ -81,7 +82,11 @@ function searchMap(enteredURL, enteredCity){
         plotPlaces(dedup_location_response, "none");
         document.getElementById('loader').innerHTML="";
         document.getElementById('hotelOption').innerHTML=hotelButtonHtml;
-        
+        $(document).ready(function(){
+            $("#hotelSearchBtn").unbind('click');
+            $("#hotelSearchBtn").off('click').on('click', function (){
+                plotHotel()
+            });});
 
         //document.getElementById('rowid2').addEventListener("mouseover", alertFunction)
         //document.getElementById('placeid2').addEventListener("mouseover", alertFunction)
@@ -114,12 +119,12 @@ function printLocTable(li, tag, thisid){
             id = 'rowid' + (i+1)
             placeid = 'placeid' + (i+1)
             typeid = 'typeid' + (i+1)
-            loc_type = li[i].result.types[0].replace("_"," ").replace(/^./, li[i].result.types[0][0].toUpperCase())
+            loc_type = li[i].result.types[0].replace(/_/g," ").replace(/^./, li[i].result.types[0][0].toUpperCase())
             if (li[i].result.opening_hours == undefined){
                 var open_hours = " "
             }
             else{
-                console.log(String(li[i].result.opening_hours.weekday_text).replace(/,/g,"<br>"))
+                //console.log(String(li[i].result.opening_hours.weekday_text).replace(/,/g,"<br>"))
                 var open_hours = String(li[i].result.opening_hours.weekday_text).replace(/,/g,"<br>")
             }
             var website = li[i].result.website;
@@ -169,7 +174,7 @@ function plotPlaces(places_list, hotelid){
     }
     //console.log(latlngbounds)
     //create new array of all the markers (not for hotel)
-    if(places_list.length>1){
+    if(places_list.length>1 & hotelid != 0){
         marker_array = []
         console.log("SETTING MARKER ARRAY TO []")
     }
@@ -189,7 +194,7 @@ function plotPlaces(places_list, hotelid){
         console.log(url);
         marker = new google.maps.Marker({position: position, map:map, title:name, icon:url});
         //add markers to array
-        if(places_list.length>1){
+        if(places_list.length>1 && i != hotelid){
             marker_array.push(marker);
         }
         var infowindow = new google.maps.InfoWindow();
@@ -277,14 +282,21 @@ function removeMarker(idx){
    // }
     clearMarkers(marker_array);
     var removeID = idx;
-    console.log(dedup_location_response[removeID]);
-    dedup_location_response.splice(removeID,1);
+    if (all_loc_w_hotel == undefined){
+        console.log("all loc with hotel undefined")
+        var loc_array = dedup_location_response
+    }
+    else{
+        var loc_array = all_loc_w_hotel
+    }
+    console.log(loc_array[removeID]);
+    loc_array.splice(removeID,1);
     marker_array.splice(removeID,1);
     console.log("NEW LIST")
-    console.log(dedup_location_response);
+    console.log(loc_array);
     var listprint = ""
-    printLocTable(dedup_location_response, listprint, 'mytable')
-    plotPlaces(dedup_location_response,"red");
+    printLocTable(loc_array, listprint, 'mytable')
+    plotPlaces(loc_array,"red");
 }
 
 function plotHotel(){

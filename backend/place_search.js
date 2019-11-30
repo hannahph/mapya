@@ -65,7 +65,7 @@ function basicSearch(search_terms,callback){
     var promise_list = []
    // for (i = 0; i<20; i++){
     for (i = 0; i < search_terms.length; i++) {
-        var YOUR_API_KEY ='**API KEY**';
+        var YOUR_API_KEY ='AIzaSyDYvaowyxOC6QD5P5zcrVeSAzLxI_ZmCGg';
         console.log('searching', search_terms[i])
         //result_list.push(basicSingle(search_terms[i])) 
         current_search_term = search_terms[i]
