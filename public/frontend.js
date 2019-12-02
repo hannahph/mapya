@@ -192,7 +192,7 @@ function plotPlaces(places_list, hotelid){
         }
         var url= "http://maps.google.com/mapfiles/ms/icons/" + color + "-dot.png";
         console.log(url);
-        marker = new google.maps.Marker({position: position, map:map, title:name, icon:url});
+        marker = new google.maps.Marker({position: position, map:map, icon:url});
         //add markers to array
         if(places_list.length>1 && i != hotelid){
             marker_array.push(marker);
