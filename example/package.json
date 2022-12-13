@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/lcrofoot/unMaps#readme",
   "dependencies": {
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "path": "^0.12.7",
     "xmlhttprequest": "^1.8.0"
   }
